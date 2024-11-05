@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>MovieDB Clone</title>
+    <link rel="stylesheet" href="./css/movie-single-style.css" />
+    <script src="./js/index.js" defer></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="search-box">
+        <a href="#"><h1>Movie Database API Demo</h1></a>
+        <!-- form can be replaced with any input type, 
+     checkbox, etc... using that input, we can narrow down any
+     type of search result-->
+        <form id="search-form">
+          <input
+            type="text"
+            name="search-input"
+            id="search-input"
+            placeholder="Search your movie here"
+          />
+          <button type="submit" class="search-btn">Search</button>
+        </form>
+      </div>
+      <!-- placeholder html location for dynamic contents -->
+      <div class="result"></div>
+    </div>
+  </body>
+</html>
