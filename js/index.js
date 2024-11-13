@@ -62,6 +62,94 @@ function createMovieCard(movie) {
 
   //building the movie card html
   //remember, $ {} to access variables
-    const cardTemplate = 
-    <div class="column"
+  const cardTemplate = (
+    <div class="column">
+      <div class="card">
+        <a class="card-media" href="./img-01.jpeg">
+          <img src="${imagePath}" alt="${original_title}" width="100%" />
+        </a>
+        <div class="card-content">
+          <div class="card-header">
+            <div class="left-content">
+              <h3 style="font-weight: 600">${truncatedTitle}</h3>
+              <span style="color: #12efec">${formattedDate}</span>
+            </div>
+            <div class="right-content">
+              <a href="${imagePath}" target="_blank" class="card-btn">
+                {" "}
+                See Cover{" "}
+              </a>
+            </div>
+          </div>
+          <div class="info">${overview || "No overview available..."}</div>
+        </div>
+      </div>
+    </div>
+  );
+  return cardTemplate;
 }
+
+//clear any content for search purposes
+function clearResults() {
+  result.innerHTML = "";
+}
+
+// display results on the page
+function showResults(item) {
+  const newContent = item.map(createMovieCard).join("");
+  result.innerHTML += newContent || "<p> No Results Found. Search again. </p>";
+}
+
+// Load more results
+async function loadMoreResults() {
+  if (isSearching) {
+    return;
+  }
+  page++;
+  const searchTerm = query.value;
+  const url = searchTerm
+    ? `${searchUrl}${searchTerm}&page=${page}`
+    : `https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=${APIKey}&page=${page}`;
+  await fetchAndShowResult(url);
+}
+
+// detect end of page and load more results
+function detectEnd() {
+  const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
+  if (scrollTop + clientHeight >= scrollHeight - 20) {
+    loadMoreResults();
+  }
+}
+
+// Handle search operation
+// input param - event parameter
+async function handleSearch(e) {
+  console.log("debug inside handleSearch function...");
+  // prevent form from resetting when submit is clicked
+  e.preventDefault();
+  const searchTerm = query.value.trim();
+  console.log(`input term by user is ${searchTerm}`);
+  if (searchTerm) {
+    isSearching = true;
+    clearResults();
+    const newUrl = `${searchUrl}${searchTerm}&page=${page}`;
+    await fetchAndShowResult(newUrl);
+    query.value = "";
+  }
+}
+
+// create event listeners and associate them to the function logic to be executed when detected on the page
+// note - while specifying/calling the function here, we do nt include the first brackets.
+form.addEventListener("submit", handleSearch);
+window.addEventListener("scroll", detectEnd);
+window.addEventListener("resize", detectEnd);
+
+// initialize the page
+async function init() {
+  clearResults();
+  const url = `https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=${APIKey}&page=${page}`;
+  isSearching = false;
+  await fetchAndShowResult(url);
+}
+
+init();
